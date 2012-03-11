@@ -9,12 +9,8 @@ class MoviesController < ApplicationController
   def index
     @order = params[:order]
     @all_ratings = Movie.all_ratings
-    if params[:ratings] != nil
-      @ratings = params[:ratings].keys
-      @movies = Movie.all :conditions => ["rating in (:ratings)", {:ratings => @ratings}], :order => @order
-    else
-      @movies = Movie.all :order => @order
-    end
+    @ratings = params[:ratings]
+    @movies = Movie.all :conditions => params[:ratings] != nil ? ["rating in (:ratings)", {:ratings => @ratings.keys}] : [], :order => @order
   end
 
   def new
