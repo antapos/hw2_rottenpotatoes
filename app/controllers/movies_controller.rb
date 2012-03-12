@@ -8,9 +8,17 @@ class MoviesController < ApplicationController
 
   def index
     @order = params[:order]
-    @all_ratings = Movie.all_ratings
     @ratings = params[:ratings]
+    if @order == nil && @ratings == nil && params[:commit] == nil
+      @order = session[:order]
+      @ratings = session[:ratings]
+    else
+      session[:order] = @order
+      session[:ratings] = @ratings
+    end
     @movies = Movie.all :conditions => params[:ratings] != nil ? ["rating in (:ratings)", {:ratings => @ratings.keys}] : [], :order => @order
+    @all_ratings = Movie.all_ratings
+    redirect_to movies_path(:order => @order, :ratings => @ratings) if @order != params[:order] && @ratings != params[:ratings]
   end
 
   def new
